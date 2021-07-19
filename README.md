@@ -51,19 +51,38 @@ having count(column_B) > 1
 Querying the DBC
 ---
 
-* Check every table in LAB_A for a column containing the word salary
+* Check what tables in Lab_A contain a column with the word "salary" in their name 
 ~~~~sql
 select * from dbc.columns
 where columnname like '%salary%'
 and databasename = 'LAB_A'
 ~~~~
 
-* Check every table containing the word salary in Lab_A
+* Check what tables in Lab_A contain the word "salary" in their name 
 ~~~~sql
 select * from dbc.columns
 where columnname like '%salary%'
 and databasename = 'LAB_A'
 ~~~~
+
+Declaring a variable 
+---
+
+* Declare a variable "counter" as 20 (defined as an integer), insert a while loop increasing the counter by 1 at each iteration until it hits 30 
+
+~~~~sql
+DECLARE @counter INT
+SET @counter = 20
+
+while @counter < 30
+
+Begin 
+  select @counter = @counter + 1
+ end
+ 
+ select @counter
+~~~~
+
 
 Rank and partition
 ---
@@ -73,6 +92,33 @@ Rank and partition
 select customer, salary
 from Table_A
 qualify RANK() OVER (partition by customer order by dt_time) = 1 
+~~~~
+
+* Window function   
+~~~~sql
+select OrderID, location,
+count(location)
+over(Partition by location) as TotalOrders
+from Orders
+~~~~
+
+
+* Use Lead() and Lag() to get the previous and next value in a window
+~~~~sql
+select location, order_date
+LAG(order_date)
+over(Partition by location order by order_date) as Previousorder
+Lead(order_date)
+over(Partition by location order by order_date) as Nextorder
+from Orders
+~~~~
+
+* Running total
+~~~~sql
+select location, order_date
+sum(price)
+over(Partition by location order by order_date) as location_total
+from Orders
 ~~~~
 
 
